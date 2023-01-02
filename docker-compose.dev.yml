@@ -1,0 +1,70 @@
+version: "3"
+
+services:
+  orders:
+    image: order-and-payments/orders:latest
+    build:
+      context: ./back-end/order-microservice
+      dockerfile: Dockerfile
+      args:
+        - NODE_ENV=development
+    ports:
+      - '4000:4000'
+    depends_on:
+      - redis
+      - mysql
+
+  payments:
+    image: orders-and-payments/payments:latest
+    build:
+      context: ./back-end/payment-microservice
+      dockerfile: Dockerfile
+    environment:
+      - REDIS_HOST=localhost
+    ports:
+      - "4001:3000"
+    depends_on:
+      - redis
+
+  redis:
+    image: "bitnami/redis:latest"
+    environment:
+      - ALLOW_EMPTY_PASSWORD=yes
+      - REDIS_DISABLE_COMMANDS=FLUSHDB,FLUSHALL
+    ports:
+      - "6379:6379"
+    volumes:
+      - "redis_data:/bitnami/redis"
+    
+  mysql:
+    container_name: mysql_db
+    hostname: mysql_db
+    image: "mysql:5.7"
+    command: --init-file /config/initial.sql
+    environment: 
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: mysql
+      MYSQL_USER: root
+      MYSQL_PASSWORD: root
+    ports:
+      - "3306:3306"
+    volumes:
+      - "mysql_data:/var/lib/mysql"
+      - ./initial.sql:/config/initial.sql
+
+  web:
+    container_name: spa_orders
+    build:
+      context: ./front-end
+      dockerfile: Dockerfile
+    ports:
+      - "3000:80"
+    environment:
+      NODE_ENV: development
+
+volumes:
+  redis_data:
+    driver: local
+
+  mysql_data:
+    driver: local

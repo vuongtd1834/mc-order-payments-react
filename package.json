@@ -1,0 +1,11 @@
+{
+  "name": "orders-and-payments",
+  "version": "1.0.0",
+  "main": "index.js",
+  "repository": "git@github.com:Sotatek-VuongTran3/orders-and-payments.git",
+  "author": "vuongtd <vuongtd1834@github.com>",
+  "license": "MIT",
+  "dependencies": {
+    "husky": "^7.0.4"
+  }
+}

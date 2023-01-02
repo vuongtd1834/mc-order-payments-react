@@ -1,0 +1,12 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+cd back-end/order-microservice
+yarn lint-order
+
+cd ../payment-microservice
+yarn lint-payment
+
+cd ../../front-end
+yarn lint-front
+
